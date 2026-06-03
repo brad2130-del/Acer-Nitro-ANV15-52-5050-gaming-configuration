@@ -1,0 +1,62 @@
+{
+  "session_id": "905f26ca",
+  "game": "vulkaninfo",
+  "start_ts": "2026-06-02T15:22:41.486594+00:00",
+  "end_ts": "2026-06-02T15:22:42.366767+00:00",
+  "metrics": [
+    {
+      "ts": "2026-06-02T15:22:41.787559+00:00",
+      "temp_c": 37.0,
+      "gpu_util": 1.0,
+      "mem_util": 0.0,
+      "vram_used": 2.0,
+      "vram_free": 7707.0,
+      "vram_total": 8151.0,
+      "vram_pct": 0.0,
+      "power_w": 10.11,
+      "power_limit": 0.0,
+      "gpu_clock": 300.0,
+      "mem_clock": 9001.0,
+      "throttle": 4,
+      "throttled": true,
+      "throttle_flags": [
+        "SW_POWER_CAP"
+      ],
+      "pstate": "P4",
+      "runtime_status": "active",
+      "smi_latency_ms": 18.4
+    }
+  ],
+  "alerts": [
+    "THROTTLE: SW_POWER_CAP"
+  ],
+  "fixes_applied": [],
+  "pids": [
+    6618
+  ],
+  "all_gpu_procs": [
+    {
+      "pid": 6618,
+      "name": "vulkaninfo",
+      "sm": 0
+    }
+  ],
+  "nvrm_errors_at_start": [
+    "Jun 02 11:17:30 ultramarine kernel: NVRM: loading NVIDIA UNIX Open Kernel Module for x86_64  595.71.05  Release Build  (root@ultramarine)  Tue May 19 02:28:30 PM EDT 2026",
+    "Jun 02 11:17:31 ultramarine kernel: NVRM: GPU0 nvAssertOkFailedNoLog: Assertion failed: Invalid data passed [NV_ERR_INVALID_DATA] (0x00000025) returned from PlatformRequestHandler failed to get target temp from SBIOS @ platform_request_handler_ctrl.c:2171",
+    "Jun 02 11:17:31 ultramarine kernel: NVRM: GPU0 nvAssertOkFailedNoLog: Assertion failed: Invalid data passed [NV_ERR_INVALID_DATA] (0x00000025) returned from PlatformRequestHandler failed to get platform power mode from SBIOS @ platform_request_handler_ctrl.c:2114"
+  ],
+  "summary": {
+    "duration_s": 0.5,
+    "temp_max": 37.0,
+    "temp_avg": 37.0,
+    "util_avg": 1.0,
+    "vram_peak_pct": 0.0,
+    "throttle_events": 1,
+    "total_samples": 1,
+    "alerts": [
+      "THROTTLE: SW_POWER_CAP"
+    ],
+    "fixes_applied": []
+  }
+}

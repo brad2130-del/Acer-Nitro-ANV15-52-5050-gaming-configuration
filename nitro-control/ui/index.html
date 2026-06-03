@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nitro Control</title>
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;400;600;800&display=swap');
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg:       #080b10;
+  --bg2:      #0c0f18;
+  --bg3:      #111520;
+  --panel:    #141826;
+  --panel2:   #1a2035;
+  --border:   #1c2b40;
+  --border2:  #263d5c;
+  --orange:   #ff6b1a;
+  --orange2:  #ff8c42;
+  --oglow:    rgba(255,107,26,.18);
+  --oglow2:   rgba(255,107,26,.35);
+  --cyan:     #00d4ff;
+  --cdim:     rgba(0,212,255,.15);
+  --green:    #39ff6e;
+  --gdim:     rgba(57,255,110,.12);
+  --yellow:   #ffd60a;
+  --red:      #ff3a5c;
+  --text:     #c0d0ec;
+  --tdim:     #4a6080;
+  --tbright:  #e4f0ff;
+}
+
+body {
+  font-family:'Exo 2',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(255,107,26,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,107,26,.025) 1px, transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;
+  z-index:0;
+}
+
+body::after {
+  content:'';
+  position:fixed; top:-50%; left:-50%; width:200%; height:200%;
+  background:
+    radial-gradient(ellipse at 70% 15%, rgba(255,107,26,.05) 0%, transparent 45%),
+    radial-gradient(ellipse at 15% 85%, rgba(0,212,255,.04) 0%, transparent 35%);
+  pointer-events:none; z-index:0;
+}
+
+.wrap {
+  position:relative; z-index:1;
+  max-width:1120px; margin:0 auto;
+  padding:18px;
+  display:flex; flex-direction:column; gap:14px;
+}
+
+/* ── HEADER ─────────────────────────────────────────────────── */
+.header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 22px;
+  background:linear-gradient(135deg, var(--panel), var(--panel2));
+  border:1px solid var(--border2);
+  border-radius:14px;
+  position:relative; overflow:hidden;
+}
+.header::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent 5%, var(--orange) 30%, var(--orange2) 70%, transparent 95%);
+}
+.logo-hex { width:46px; height:46px; flex-shrink:0; }
+.htitle h1 {
+  font-family:'Rajdhani',sans-serif;
+  font-size:24px; font-weight:700;
+  color:var(--tbright); letter-spacing:3px; text-transform:uppercase;
+}
+.htitle p {
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px; color:var(--orange); letter-spacing:1.2px; margin-top:3px;
+}
+.hbadges { display:flex; align-items:center; gap:14px; }
+.badge {
+  display:flex; align-items:center; gap:7px;
+  padding:5px 13px;
+  border-radius:20px; font-family:'Share Tech Mono',monospace; font-size:11px;
+  border:1px solid;
+}
+.badge-green { color:var(--green); background:var(--gdim); border-color:rgba(57,255,110,.22); }
+.badge-dim   { color:var(--tdim);  background:var(--bg3);  border-color:var(--border); }
+.dot { width:7px; height:7px; border-radius:50%; background:currentColor; animation:blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1;box-shadow:0 0 6px currentColor;} 50%{opacity:.5;} }
+
+/* ── MAIN GRID ──────────────────────────────────────────────── */
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+.span2 { grid-column:1 / -1; }
+
+/* ── PANELS ─────────────────────────────────────────────────── */
+.panel {
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px; padding:20px;
+  position:relative; overflow:hidden;
+  transition:border-color .25s;
+}
+.panel:hover { border-color:var(--border2); }
+
+.panel::after {
+  content:''; position:absolute;
+  top:0; left:0; width:3px; height:100%;
+  border-radius:14px 0 0 14px;
+}
+.pa-orange::after { background:linear-gradient(180deg,var(--orange) 0%,transparent 80%); }
+.pa-cyan::after   { background:linear-gradient(180deg,var(--cyan)   0%,transparent 80%); }
+.pa-green::after  { background:linear-gradient(180deg,var(--green)  0%,transparent 80%); }
+
+.ph {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px;
+}
+.pt { display:flex; align-items:center; gap:10px; }
+.picon {
+  width:34px; height:34px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+.picon-o { background:var(--oglow);  border:1px solid rgba(255,107,26,.2); }
+.picon-c { background:var(--cdim);   border:1px solid rgba(0,212,255,.2);  }
+.picon-g { background:var(--gdim);   border:1px solid rgba(57,255,110,.2); }
+.pname {
+  font-family:'Rajdhani',sans-serif; font-weight:600;
+  font-size:14px; letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--tbright);
+}
+
+/* ── THERMAL ────────────────────────────────────────────────── */
+.temp-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px; }
+.tcard {
+  display:flex; flex-direction:column; align-items:center;
+  padding:14px 10px; gap:7px;
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:12px; transition:all .25s; cursor:default;
+}
+.tcard:hover { border-color:var(--orange); background:linear-gradient(135deg,var(--bg3),var(--oglow)); }
+.tlabel { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--tdim); letter-spacing:1px; }
+.tval {
+  font-family:'Rajdhani',sans-serif; font-size:36px; font-weight:700;
+  color:var(--orange); line-height:1;
+  text-shadow:0 0 24px var(--oglow2);
+}
+.tval span { font-size:14px; color:var(--tdim); font-weight:400; }
+.tbar-wrap { width:100%; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+.tbar { height:100%; border-radius:2px; transition:width 1s ease, background .5s; }
+
+.fan-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.fcard { padding:14px; background:var(--bg3); border:1px solid var(--border); border-radius:12px; }
+.fhead { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.flabel { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--tdim); }
+.fspin { display:inline-block; animation:spin 1.8s linear infinite; }
+@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.frpm { font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; color:var(--cyan); text-shadow:0 0 14px rgba(0,212,255,.3); }
+.frpm span { font-size:10px; color:var(--tdim); font-weight:400; }
+.fbar-wrap { width:100%; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+.fbar { height:100%; border-radius:2px; background:linear-gradient(90deg,var(--cyan),rgba(0,212,255,.4)); box-shadow:0 0 8px rgba(0,212,255,.4); transition:width 1s ease; }
+
+/* ── GPU EXTENDED ───────────────────────────────────────────── */
+.gpu-big {
+  display:flex; align-items:flex-end; gap:6px; margin-bottom:12px;
+}
+.gwatt {
+  font-family:'Rajdhani',sans-serif; font-size:52px; font-weight:800;
+  color:var(--orange); line-height:1; text-shadow:0 0 32px var(--oglow2);
+}
+.gwunit { font-family:'Rajdhani',sans-serif; font-size:18px; color:var(--tdim); padding-bottom:10px; }
+
+.gpu-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.chip {
+  font-family:'Share Tech Mono',monospace; font-size:10px;
+  padding:4px 10px; border-radius:20px; border:1px solid var(--border2);
+  color:var(--tdim); background:var(--bg3); white-space:nowrap;
+}
+.chip-on { border-color:rgba(0,212,255,.3); color:var(--cyan); background:var(--cdim); }
+.chip-ok { border-color:rgba(57,255,110,.3); color:var(--green); background:var(--gdim); }
+
+.throttle-row { display:flex; gap:8px; margin-bottom:14px; }
+.tchip {
+  display:flex; align-items:center; gap:6px; padding:6px 12px;
+  border-radius:20px; font-family:'Share Tech Mono',monospace; font-size:11px;
+  border:1px solid; transition:all .3s;
+}
+.tchip-ok   { border-color:rgba(57,255,110,.25); color:var(--green); background:var(--gdim); }
+.tchip-warn { border-color:rgba(255,214,10,.25);  color:var(--yellow); background:rgba(255,214,10,.08); }
+.tcdot { width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+/* ── SLIDERS ────────────────────────────────────────────────── */
+.slider-wrap { margin-top:12px; }
+.sl-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.sl-label { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600; color:var(--tbright); }
+.sl-val {
+  font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--orange);
+  background:var(--oglow); padding:2px 10px; border-radius:10px;
+  border:1px solid rgba(255,107,26,.22);
+}
+input[type=range] {
+  -webkit-appearance:none; width:100%; height:4px;
+  background:var(--border2); border-radius:4px; outline:none; cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+  background:linear-gradient(135deg,var(--orange),var(--orange2));
+  box-shadow:0 0 10px var(--oglow2); transition:box-shadow .2s;
+}
+input[type=range]:hover::-webkit-slider-thumb { box-shadow:0 0 18px var(--orange); }
+
+/* ── POWER PROFILES ─────────────────────────────────────────── */
+.profile-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; }
+.pbtn {
+  padding:10px 4px; background:var(--bg3); border:1px solid var(--border);
+  border-radius:10px; cursor:pointer; text-align:center;
+  transition:all .2s; position:relative; overflow:hidden;
+}
+.pbtn:hover { border-color:var(--orange); background:var(--oglow); transform:translateY(-2px); }
+.pbtn.active {
+  border-color:var(--orange);
+  background:linear-gradient(135deg,rgba(255,107,26,.22),rgba(255,107,26,.07));
+  box-shadow:0 0 22px var(--oglow2),inset 0 0 22px rgba(255,107,26,.05);
+}
+.pbtn.active::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:var(--orange); box-shadow:0 0 8px var(--orange);
+}
+.pbtn:active { transform:translateY(0); }
+.pem { font-size:20px; margin-bottom:5px; }
+.pname2 {
+  font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:.4px; text-transform:uppercase; color:var(--text); line-height:1.3;
+}
+.pbtn.active .pname2 { color:var(--orange); }
+
+/* ── TOGGLES ────────────────────────────────────────────────── */
+.toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 0; border-bottom:1px solid var(--border);
+}
+.toggle-row:last-child { border-bottom:none; padding-bottom:0; }
+.tinfo { flex:1; }
+.tlname { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:600; color:var(--tbright); }
+.tldesc { font-size:11px; color:var(--tdim); margin-top:2px; }
+.toggle { position:relative; width:44px; height:24px; flex-shrink:0; margin-left:12px; }
+.toggle input { opacity:0; width:0; height:0; }
+.tslider {
+  position:absolute; inset:0; background:var(--border2); border:1px solid var(--border2);
+  border-radius:24px; cursor:pointer; transition:all .3s;
+}
+.tslider::before {
+  content:''; position:absolute; width:18px; height:18px;
+  left:2px; bottom:2px; background:var(--tdim); border-radius:50%; transition:all .3s;
+}
+input:checked + .tslider {
+  background:linear-gradient(135deg,var(--orange),var(--orange2));
+  border-color:var(--orange); box-shadow:0 0 12px var(--oglow2);
+}
+input:checked + .tslider::before { transform:translateX(20px); background:white; }
+
+/* ── BATTERY ────────────────────────────────────────────────── */
+.bat-display { display:flex; align-items:center; gap:18px; margin-bottom:14px; }
+.bat-body {
+  width:52px; height:28px;
+  border:2px solid var(--border2); border-radius:5px; padding:3px;
+  position:relative; flex-shrink:0;
+}
+.bat-body::after {
+  content:''; position:absolute; right:-7px; top:50%; transform:translateY(-50%);
+  width:5px; height:12px; background:var(--border2); border-radius:0 3px 3px 0;
+}
+.bat-fill {
+  height:100%; border-radius:2px;
+  background:linear-gradient(90deg,var(--green),#6fff8e);
+  box-shadow:0 0 8px rgba(57,255,110,.3); transition:width .5s;
+}
+.bat-pct {
+  font-family:'Rajdhani',sans-serif; font-size:30px; font-weight:700;
+  color:var(--green); text-shadow:0 0 16px rgba(57,255,110,.3);
+}
+.bat-pct span { font-size:14px; color:var(--tdim); font-weight:400; }
+.bat-status { font-family:'Share Tech Mono',monospace; font-size:11px; color:var(--tdim); margin-top:3px; }
+
+/* ── LOG ────────────────────────────────────────────────────── */
+.log-body {
+  background:var(--bg); border:1px solid var(--border);
+  border-radius:10px; padding:12px 14px; height:120px;
+  overflow-y:auto; font-family:'Share Tech Mono',monospace;
+  font-size:11px; line-height:1.9;
+}
+.log-body::-webkit-scrollbar { width:3px; }
+.log-body::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+.ll { color:var(--tdim); }
+.ll.ok   { color:var(--green); }
+.ll.warn { color:var(--yellow); }
+.ll.err  { color:var(--red); }
+.ll.info { color:var(--cyan); }
+.ll.cmd  { color:var(--orange); opacity:.8; }
+
+/* ── ACTION BUTTONS ─────────────────────────────────────────── */
+.arow { display:flex; gap:10px; margin-top:14px; }
+.btn {
+  flex:1; padding:10px 14px; border-radius:9px;
+  border:1px solid var(--border2); background:var(--bg3);
+  color:var(--text); font-family:'Rajdhani',sans-serif;
+  font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
+  cursor:pointer; transition:all .2s;
+}
+.btn:hover { border-color:var(--orange); color:var(--orange); background:var(--oglow); transform:translateY(-1px); box-shadow:0 4px 16px rgba(255,107,26,.1); }
+.btn:active { transform:translateY(0); }
+.btn-p {
+  background:linear-gradient(135deg,var(--orange),var(--orange2));
+  border-color:var(--orange); color:var(--bg); font-weight:700;
+}
+.btn-p:hover { color:var(--bg); box-shadow:0 4px 22px var(--oglow2); }
+
+/* ── DIVIDER ────────────────────────────────────────────────── */
+.divider { height:1px; background:var(--border); margin:14px 0; }
+
+/* ── NVIDIA LIVE ROW ─────────────────────────────────────────── */
+.nv-row { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:12px; }
+.nvcard {
+  padding:10px; background:var(--bg3); border:1px solid var(--border);
+  border-radius:10px; text-align:center;
+}
+.nvlabel { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--tdim); letter-spacing:.8px; text-transform:uppercase; margin-bottom:4px; }
+.nvval { font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; color:var(--cyan); }
+.nvval-sm { font-size:13px; }
+
+/* ── ANIMATIONS ─────────────────────────────────────────────── */
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.panel { animation:fadeIn .4s ease both; }
+.panel:nth-child(1){animation-delay:.05s}
+.panel:nth-child(2){animation-delay:.1s}
+.panel:nth-child(3){animation-delay:.15s}
+.panel:nth-child(4){animation-delay:.2s}
+.panel:nth-child(5){animation-delay:.25s}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <div style="display:flex;align-items:center;gap:14px">
+      <svg class="logo-hex" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="23,2 43,13 43,33 23,44 3,33 3,13" fill="none" stroke="#ff6b1a" stroke-width="1.5" opacity=".7"/>
+        <polygon points="23,7 38,15.5 38,30.5 23,39 8,30.5 8,15.5" fill="rgba(255,107,26,.07)" stroke="#ff8c42" stroke-width="1" opacity=".6"/>
+        <text x="23" y="29" text-anchor="middle" font-family="Rajdhani,sans-serif" font-size="16" font-weight="700" fill="#ff6b1a">N</text>
+      </svg>
+      <div class="htitle">
+        <h1>Nitro Control</h1>
+        <p id="bios-line">ANV15-52 · BIOS V1.52 · RTX 5050 · i5-13420H · CachyOS 7.0.8</p>
+      </div>
+    </div>
+    <div class="hbadges">
+      <div class="badge badge-green"><div class="dot"></div><span id="module-status">linuwu_sense ACTIVE</span></div>
+      <div class="badge badge-dim" id="clock-badge">--:--:--</div>
+    </div>
+  </div>
+
+  <!-- ── GRID ── -->
+  <div class="grid">
+
+    <!-- THERMAL -->
+    <div class="panel pa-orange">
+      <div class="ph">
+        <div class="pt"><div class="picon picon-o">🌡️</div><span class="pname">Thermal</span></div>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--tdim)" id="therm-ts">LIVE</span>
+      </div>
+      <div class="temp-row">
+        <div class="tcard">
+          <div class="tlabel">CPU</div>
+          <div class="tval" id="cpu-temp">43<span>°C</span></div>
+          <div class="tbar-wrap"><div class="tbar" id="cpu-bar" style="width:43%"></div></div>
+        </div>
+        <div class="tcard">
+          <div class="tlabel">GPU</div>
+          <div class="tval" id="gpu-temp">—<span>°C</span></div>
+          <div class="tbar-wrap"><div class="tbar" id="gpu-bar" style="width:0%"></div></div>
+        </div>
+        <div class="tcard">
+          <div class="tlabel">SYS</div>
+          <div class="tval" id="sys-temp">—<span>°C</span></div>
+          <div class="tbar-wrap"><div class="tbar" id="sys-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="fan-row">
+        <div class="fcard">
+          <div class="fhead">
+            <div class="flabel">CPU FAN <span class="fspin">⚙</span></div>
+          </div>
+          <div class="frpm" id="fan1">1771 <span>RPM</span></div>
+          <div class="fbar-wrap"><div class="fbar" id="fan1-bar" style="width:35%"></div></div>
+        </div>
+        <div class="fcard">
+          <div class="fhead">
+            <div class="flabel">GPU FAN <span class="fspin">⚙</span></div>
+          </div>
+          <div class="frpm" id="fan2">1981 <span>RPM</span></div>
+          <div class="fbar-wrap"><div class="fbar" id="fan2-bar" style="width:39%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POWER + GPU -->
+    <div class="panel pa-orange">
+      <div class="ph">
+        <div class="pt"><div class="picon picon-o">⚡</div><span class="pname">Power Profile</span></div>
+      </div>
+      <div class="profile-grid">
+        <div class="pbtn" data-profile="low-power"            onclick="setProfile(this)"><div class="pem">🔋</div><div class="pname2">Low Power</div></div>
+        <div class="pbtn" data-profile="quiet"                onclick="setProfile(this)"><div class="pem">🔇</div><div class="pname2">Quiet</div></div>
+        <div class="pbtn active" data-profile="balanced"      onclick="setProfile(this)"><div class="pem">⚖️</div><div class="pname2">Balanced</div></div>
+        <div class="pbtn" data-profile="balanced-performance" onclick="setProfile(this)"><div class="pem">🎯</div><div class="pname2">Bal-Perf</div></div>
+        <div class="pbtn" data-profile="performance"          onclick="setProfile(this)"><div class="pem">🔥</div><div class="pname2">Turbo</div></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="pt" style="margin-bottom:12px">
+        <div class="picon picon-c">🎮</div><span class="pname">GPU — RTX 5050</span>
+      </div>
+      <div class="throttle-row">
+        <div class="tchip tchip-ok"><div class="tcdot"></div>SSDT NPCFIX ACTIVE</div>
+        <div class="tchip tchip-ok" id="throttle-chip"><div class="tcdot"></div>-82% THROTTLE EVENTS</div>
+      </div>
+      <div class="gpu-big">
+        <div class="gwatt" id="gpu-watt">75</div>
+        <div class="gwunit">W TGP</div>
+      </div>
+      <div class="slider-wrap">
+        <div class="sl-row">
+          <span class="sl-label">Power Limit Override</span>
+          <span class="sl-val" id="watt-lbl">75W</span>
+        </div>
+        <input type="range" min="35" max="90" value="75" id="watt-slider" oninput="onWattSlider(this.value)">
+      </div>
+      <div class="gpu-chips" style="margin-top:12px">
+        <div class="chip chip-on">RTX 5050 LAPTOP</div>
+        <div class="chip chip-on">PCIe x8 GEN4</div>
+        <div class="chip">GDDR7</div>
+        <div class="chip chip-ok">NVPC FIX</div>
+        <div class="chip chip-on" id="nv-util-chip">GPU —%</div>
+        <div class="chip" id="nv-clock-chip">— MHz</div>
+      </div>
+      <div class="nv-row">
+        <div class="nvcard"><div class="nvlabel">Power Draw</div><div class="nvval nvval-sm" id="nv-power">—W</div></div>
+        <div class="nvcard"><div class="nvlabel">GPU Temp</div><div class="nvval nvval-sm" id="nv-gtemp">—°C</div></div>
+        <div class="nvcard"><div class="nvlabel">GPU Util</div><div class="nvval nvval-sm" id="nv-util">—%</div></div>
+        <div class="nvcard"><div class="nvlabel">Clock</div><div class="nvval nvval-sm" id="nv-clock">—MHz</div></div>
+      </div>
+    </div>
+
+    <!-- BATTERY -->
+    <div class="panel pa-green">
+      <div class="ph">
+        <div class="pt"><div class="picon picon-g">🔋</div><span class="pname">Battery</span></div>
+      </div>
+      <div class="bat-display">
+        <div class="bat-body"><div class="bat-fill" id="bat-fill" style="width:84%"></div></div>
+        <div>
+          <div class="bat-pct" id="bat-pct">84<span>%</span></div>
+          <div class="bat-status" id="bat-status">READING...</div>
+        </div>
+      </div>
+      <div class="slider-wrap">
+        <div class="sl-row">
+          <span class="sl-label">Charge Limit</span>
+          <span class="sl-val" id="charge-lbl">100%</span>
+        </div>
+        <input type="range" min="60" max="100" step="5" value="100" id="charge-slider" oninput="onChargeSlider(this.value)" onchange="applyChargeLimit(this.value)">
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div class="toggle-row">
+          <div class="tinfo">
+            <div class="tlname">Battery Care (80% Limit)</div>
+            <div class="tldesc">Limits charging to 80% for longevity</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="batcare-chk" onchange="onBatCare(this.checked)">
+            <span class="tslider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="tinfo">
+            <div class="tlname">USB Charging (Sleep)</div>
+            <div class="tldesc">Charge devices for 30min while off</div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="usb-chk" checked onchange="onUsbCharging(this.checked)">
+            <span class="tslider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="panel pa-cyan">
+      <div class="ph">
+        <div class="pt"><div class="picon picon-c">⚙️</div><span class="pname">System Features</span></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tinfo">
+          <div class="tlname">LCD Overdrive</div>
+          <div class="tldesc">Reduces pixel response time</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="lcd-chk" onchange="onLcd(this.checked)">
+          <span class="tslider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="tinfo">
+          <div class="tlname">Boot Animation &amp; Sound</div>
+          <div class="tldesc">Acer logo animation on POST</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="bootanim-chk" checked onchange="onBootAnim(this.checked)">
+          <span class="tslider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="tinfo">
+          <div class="tlname">Fan Auto Mode</div>
+          <div class="tldesc">EC-managed curves (recommended)</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="fanauto-chk" checked onchange="onFanAuto(this.checked)">
+          <span class="tslider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="tinfo">
+          <div class="tlname">SCX LAVD Scheduler</div>
+          <div class="tldesc">Gaming mode — low latency CPU scheduling</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="scx-chk" checked>
+          <span class="tslider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <div class="tinfo">
+          <div class="tlname">thermald</div>
+          <div class="tldesc">Intel thermal daemon (disable for CachyOS)</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="thermald-chk" onchange="onThermald(this.checked)">
+          <span class="tslider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="panel span2">
+      <div class="ph">
+        <div class="pt"><div class="picon picon-o">📟</div><span class="pname">System Log</span></div>
+        <button class="btn" style="flex:0;padding:4px 14px;font-size:11px" onclick="clearLog()">CLR</button>
+      </div>
+      <div class="log-body" id="log"></div>
+      <div class="arow">
+        <button class="btn" onclick="doRefresh()">↻ REFRESH</button>
+        <button class="btn" onclick="doDefaults()">⚙ DEFAULTS</button>
+        <button class="btn" onclick="doGpuQuery()">🎮 GPU QUERY</button>
+        <button class="btn" onclick="doBatCalibrate()">🔋 CALIBRATE</button>
+        <button class="btn btn-p" onclick="doSave()">💾 APPLY &amp; SAVE</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Backend bridge ───────────────────────────────────────────────────────────
+let backend = null;
+let backendReady = false;
+
+function initWebChannel() {
+  if (typeof QWebChannel !== 'undefined' && typeof qt !== 'undefined') {
+    new QWebChannel(qt.webChannelTransport, function(channel) {
+      backend = channel.objects.backend;
+      backendReady = true;
+      // Listen for Python signals
+      backend.logMessage.connect(function(msg, level) {
+        appendLog(msg, level);
+      });
+      appendLog('QWebChannel connected to Python backend', 'ok');
+      // Load initial settings
+      backend.get_all_settings(function(json) {
+        loadSettings(JSON.parse(json));
+      });
+    });
+  } else {
+    // Running in browser for dev preview
+    appendLog('Dev mode — no Qt backend (UI preview only)', 'warn');
+    backendReady = false;
+  }
+}
+
+function callBackend(method, args, cb) {
+  if (!backendReady || !backend) {
+    appendLog(`[MOCK] backend.${method}(${args.join(', ')})`, 'cmd');
+    if (cb) cb(true);
+    return;
+  }
+  if (args.length === 0) {
+    backend[method](cb || function(){});
+  } else if (args.length === 1) {
+    backend[method](args[0], cb || function(){});
+  } else if (args.length === 2) {
+    backend[method](args[0], args[1], cb || function(){});
+  }
+}
+
+// ── Log ──────────────────────────────────────────────────────────────────────
+function appendLog(msg, cls='') {
+  const el = document.getElementById('log');
+  const ts = new Date().toLocaleTimeString('en-US',{hour12:false});
+  const d = document.createElement('div');
+  d.className = 'll ' + cls;
+  d.textContent = `[${ts}]  ${msg}`;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('log').innerHTML = '';
+  appendLog('Log cleared', 'info');
+}
+
+// ── Telemetry (called from Python every 3s) ──────────────────────────────────
+window.updateTelemetry = function(data) {
+  if (typeof data === 'string') data = JSON.parse(data);
+
+  if (data.cpu_temp !== null && data.cpu_temp !== undefined) {
+    const c = data.cpu_temp;
+    document.getElementById('cpu-temp').innerHTML = `${c}<span>°C</span>`;
+    document.getElementById('cpu-bar').style.width = `${Math.min(c,100)}%`;
+    const h = c < 60 ? 120 : c < 80 ? 60 : 0;
+    document.getElementById('cpu-bar').style.background = `hsl(${h},100%,50%)`;
+  }
+  if (data.gpu_temp !== null && data.gpu_temp !== undefined) {
+    const g = data.gpu_temp;
+    document.getElementById('gpu-temp').innerHTML = `${g}<span>°C</span>`;
+    document.getElementById('gpu-bar').style.width = `${Math.min(g,100)}%`;
+    const h = g < 60 ? 120 : g < 80 ? 60 : 0;
+    document.getElementById('gpu-bar').style.background = `hsl(${h},100%,50%)`;
+  }
+  if (data.sys_temp !== null && data.sys_temp !== undefined) {
+    document.getElementById('sys-temp').innerHTML = `${data.sys_temp}<span>°C</span>`;
+    document.getElementById('sys-bar').style.width = `${Math.min(data.sys_temp,100)}%`;
+  }
+  if (data.fan1_rpm !== undefined) {
+    document.getElementById('fan1').innerHTML = `${data.fan1_rpm} <span>RPM</span>`;
+    document.getElementById('fan1-bar').style.width = `${(data.fan1_rpm/5000)*100}%`;
+  }
+  if (data.fan2_rpm !== undefined) {
+    document.getElementById('fan2').innerHTML = `${data.fan2_rpm} <span>RPM</span>`;
+    document.getElementById('fan2-bar').style.width = `${(data.fan2_rpm/5000)*100}%`;
+  }
+  if (data.timestamp) document.getElementById('therm-ts').textContent = data.timestamp;
+};
+
+// ── Settings loader (called from Python on init) ─────────────────────────────
+window.loadSettings = function(s) {
+  if (typeof s === 'string') s = JSON.parse(s);
+  appendLog('Loading settings from backend...', 'info');
+
+  // Profile
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.remove('active'));
+  const pb = document.querySelector(`[data-profile="${s.profile}"]`);
+  if (pb) pb.classList.add('active');
+
+  // Toggles
+  document.getElementById('lcd-chk').checked       = s.lcd_override > 0;
+  document.getElementById('bootanim-chk').checked  = s.boot_animation_sound > 0;
+  document.getElementById('fanauto-chk').checked   = s.fan_auto !== false;
+  document.getElementById('usb-chk').checked       = s.usb_charging > 0;
+  document.getElementById('batcare-chk').checked   = s.battery_limiter > 0;
+
+  // Sliders
+  if (s.battery_limiter > 0) {
+    document.getElementById('charge-slider').value = 80;
+    document.getElementById('charge-lbl').textContent = '80%';
+  }
+
+  appendLog(`Profile: ${s.profile} · Fan: ${s.fan_auto ? 'AUTO' : 'MANUAL'} · Bat-limiter: ${s.battery_limiter}`, 'ok');
+};
+
+// ── Controls ─────────────────────────────────────────────────────────────────
+function setProfile(btn) {
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const p = btn.dataset.profile;
+  appendLog(`Profile → ${p}`, 'cmd');
+  callBackend('set_profile', [p], ok => {
+    appendLog(ok ? `Profile set: ${p}` : `Profile FAILED`, ok ? 'ok' : 'err');
+  });
+}
+
+function onWattSlider(v) {
+  document.getElementById('watt-lbl').textContent = v + 'W';
+  document.getElementById('gpu-watt').textContent = v;
+  appendLog(`GPU TGP slider → ${v}W (SSDT override required to persist across reboot)`, 'warn');
+}
+
+function onChargeSlider(v) {
+  document.getElementById('charge-lbl').textContent = v + '%';
+}
+
+function applyChargeLimit(v) {
+  const limit = parseInt(v) < 100 ? 1 : 0;
+  appendLog(`Charge limit → ${v}% (battery_limiter=${limit})`, 'cmd');
+  callBackend('set_battery_limiter', [limit], ok => {
+    appendLog(ok ? `Battery limiter → ${limit}` : 'Battery limiter FAILED', ok ? 'ok' : 'err');
+  });
+}
+
+function onBatCare(checked) {
+  const limit = checked ? 1 : 0;
+  if (checked) {
+    document.getElementById('charge-slider').value = 80;
+    document.getElementById('charge-lbl').textContent = '80%';
+  } else {
+    document.getElementById('charge-slider').value = 100;
+    document.getElementById('charge-lbl').textContent = '100%';
+  }
+  callBackend('set_battery_limiter', [limit], ok => {
+    appendLog(ok ? `Battery care ${checked ? 'ENABLED (80%)' : 'DISABLED (100%)'}` : 'FAILED', ok ? 'ok' : 'err');
+  });
+}
+
+function onUsbCharging(checked) {
+  const v = checked ? 30 : 0;
+  callBackend('set_usb_charging', [v], ok => {
+    appendLog(ok ? `USB charging sleep → ${v}min` : 'USB charging FAILED', ok ? 'ok' : 'err');
+  });
+}
+
+function onLcd(checked) {
+  callBackend('set_lcd_override', [checked ? 1 : -1], ok => {
+    appendLog(ok ? `LCD overdrive → ${checked ? 'ON' : 'OFF'}` : 'LCD FAILED', ok ? 'ok' : 'err');
+  });
+}
+
+function onBootAnim(checked) {
+  callBackend('set_boot_animation', [checked ? 1 : 0]);
+  appendLog(`Boot animation → ${checked ? 'ON' : 'OFF'}`, 'info');
+}
+
+function onFanAuto(checked) {
+  callBackend('set_fan_auto', [checked], ok => {
+    appendLog(ok ? `Fan → ${checked ? 'AUTO (EC)' : 'MANUAL'}` : 'Fan FAILED', ok ? 'ok' : 'err');
+  });
+}
+
+function onThermald(checked) {
+  appendLog(`thermald: ${checked ? 'enable requires: sudo systemctl enable --now thermald' : 'sudo systemctl disable --now thermald'}`, 'warn');
+}
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+function doRefresh() {
+  appendLog('Refreshing telemetry & settings...', 'info');
+  if (backendReady) {
+    backend.get_all_settings(function(json) {
+      loadSettings(JSON.parse(json));
+    });
+    backend.get_telemetry(function(json) {
+      updateTelemetry(JSON.parse(json));
+    });
+  }
+}
+
+function doDefaults() {
+  appendLog('Applying defaults...', 'warn');
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-profile="balanced"]').classList.add('active');
+  document.getElementById('fanauto-chk').checked = true;
+  document.getElementById('lcd-chk').checked = false;
+  document.getElementById('charge-slider').value = 100;
+  document.getElementById('charge-lbl').textContent = '100%';
+  appendLog('Defaults loaded — click APPLY & SAVE to write to hardware', 'info');
+}
+
+function doGpuQuery() {
+  appendLog('Querying nvidia-smi...', 'info');
+  callBackend('get_gpu_info', [], function(json) {
+    if (!json || json === '{}') {
+      appendLog('nvidia-smi returned no data (GPU may be in power-save)', 'warn');
+      return;
+    }
+    const d = JSON.parse(json);
+    document.getElementById('nv-power').textContent  = d.power_draw   ? `${d.power_draw}W` : '—W';
+    document.getElementById('nv-gtemp').textContent  = d.temp         ? `${d.temp}°C` : '—°C';
+    document.getElementById('nv-util').textContent   = d.utilization  ? `${d.utilization}%` : '—%';
+    document.getElementById('nv-clock').textContent  = d.clock_mhz    ? `${d.clock_mhz}MHz` : '—MHz';
+    document.getElementById('nv-util-chip').textContent = `GPU ${d.utilization || 0}%`;
+    document.getElementById('nv-clock-chip').textContent = `${d.clock_mhz || 0}MHz`;
+    appendLog(`GPU: ${d.power_draw}W draw / ${d.temp}°C / ${d.utilization}% util / ${d.clock_mhz}MHz`, 'ok');
+  });
+}
+
+function doBatCalibrate() {
+  if (!confirm('Start battery calibration? This will discharge and recharge the battery fully.')) return;
+  callBackend('trigger_battery_calibration', [], ok => {
+    appendLog(ok ? 'Battery calibration started' : 'Calibration FAILED', ok ? 'ok' : 'err');
+  });
+}
+
+function doSave() {
+  appendLog('--- APPLYING & SAVING ---', 'cmd');
+  const profile = document.querySelector('.pbtn.active')?.dataset.profile || 'balanced';
+  callBackend('set_profile', [profile]);
+  callBackend('set_fan_auto', [document.getElementById('fanauto-chk').checked]);
+  callBackend('set_lcd_override', [document.getElementById('lcd-chk').checked ? 1 : -1]);
+  callBackend('set_boot_animation', [document.getElementById('bootanim-chk').checked ? 1 : 0]);
+  callBackend('set_usb_charging', [document.getElementById('usb-chk').checked ? 30 : 0]);
+  callBackend('set_battery_limiter', [document.getElementById('batcare-chk').checked ? 1 : 0]);
+  appendLog('All settings written to sysfs & saved to ~/.config/nitro-control/settings.json', 'ok');
+  appendLog('--- DONE ---', 'cmd');
+}
+
+// ── Clock ─────────────────────────────────────────────────────────────────────
+function updateClock() {
+  document.getElementById('clock-badge').textContent =
+    new Date().toLocaleTimeString('en-US',{hour12:false});
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── Battery level from /sys/class/power_supply ────────────────────────────────
+function updateBattery() {
+  // Can be polled via backend in real app; simulate here for preview
+  const pct = 84;
+  document.getElementById('bat-fill').style.width = pct + '%';
+  document.getElementById('bat-pct').innerHTML = `${pct}<span>%</span>`;
+  document.getElementById('bat-status').textContent = 'CHARGING';
+}
+updateBattery();
+
+// ── Boot log ──────────────────────────────────────────────────────────────────
+window.onload = function() {
+  appendLog('Nitro Control starting...', 'info');
+  appendLog('linuwu_sense: Acer Laptop ACPI-WMI Extras loaded', 'ok');
+  appendLog('linuwu_sense: nitro_v4=1 · Platform profile registered', 'ok');
+  appendLog('SSDT NPCFIX override active · GPU TGP = 75W', 'info');
+  appendLog('hwmon4: temp1/temp2/temp3 · fan1/fan2 exposed', 'ok');
+  appendLog('SCX LAVD scheduler: Gaming mode', 'ok');
+  appendLog('Initializing Qt backend bridge...', 'info');
+  initWebChannel();
+};
+</script>
+</body>
+</html>

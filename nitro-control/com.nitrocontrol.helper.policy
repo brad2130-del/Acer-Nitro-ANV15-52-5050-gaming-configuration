@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+  "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+  "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig-1.dtd">
+
+<policyconfig>
+
+  <vendor>Nitro Control</vendor>
+  <vendor_url>https://github.com/bradleyfoster/nitro-control</vendor_url>
+
+  <action id="com.nitrocontrol.helper.write">
+    <description>Write Acer Nitro hardware settings</description>
+    <message>Authentication required to change Nitro hardware settings</message>
+    <defaults>
+      <!-- Allow active session users without password prompt -->
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/local/bin/nitro-helper</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+
+</policyconfig>

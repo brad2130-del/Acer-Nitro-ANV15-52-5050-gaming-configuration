@@ -1,0 +1,52 @@
+{
+  "session_id": "b7a1853d",
+  "game": "vulkaninfo",
+  "start_ts": "2026-06-03T02:51:40.805194+00:00",
+  "end_ts": "2026-06-03T02:51:41.456885+00:00",
+  "metrics": [
+    {
+      "ts": "2026-06-03T02:51:40.902598+00:00",
+      "temp_c": 40.0,
+      "gpu_util": 0.0,
+      "mem_util": 0.0,
+      "vram_used": 33.0,
+      "vram_free": 7667.0,
+      "vram_total": 8151.0,
+      "vram_pct": 0.4,
+      "power_w": 4.07,
+      "power_limit": 0.0,
+      "gpu_clock": 1927.0,
+      "mem_clock": 9001.0,
+      "throttle": 0,
+      "throttled": false,
+      "throttle_flags": [],
+      "pstate": "P4",
+      "runtime_status": "active",
+      "smi_latency_ms": 20.3
+    }
+  ],
+  "alerts": [],
+  "fixes_applied": [],
+  "pids": [
+    147015
+  ],
+  "all_gpu_procs": [
+    {
+      "pid": 147015,
+      "name": "vulkaninfo",
+      "sm": 0
+    }
+  ],
+  "nvrm_errors_at_start": [],
+  "summary": {
+    "duration_s": 0.5,
+    "temp_max": 40.0,
+    "temp_avg": 40.0,
+    "util_avg": 0.0,
+    "vram_peak_pct": 0.4,
+    "throttle_events": 0,
+    "total_samples": 1,
+    "alerts": [],
+    "fixes_applied": []
+  }
+}

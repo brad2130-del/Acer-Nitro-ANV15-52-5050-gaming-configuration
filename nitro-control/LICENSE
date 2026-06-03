@@ -1,0 +1,22 @@
+TODO: CHOOSE A LICENSE BEFORE PUBLISHING
+========================================
+
+This project does not yet have a license. Until a license is added, the default is
+"all rights reserved" — others cannot legally reuse the code. Pick one before making
+the repository public.
+
+Suggested options:
+
+- MIT — permissive, simplest; lets anyone use/modify/redistribute with attribution.
+  Good if you want maximum adoption by other Nitro/Linux users.
+
+- GPL-3.0 — copyleft; derivatives must also stay open source. Good if you want
+  improvements pushed back to the community. Note: this project interfaces with the
+  GPL-licensed `linuwu_sense` kernel module via sysfs (a stable userspace ABI), so it is
+  not itself a derivative work of that module — either license is fine on that front.
+
+To apply one:
+  1. Pick MIT or GPL-3.0 (or another).
+  2. Replace this file with the full license text (e.g. from https://choosealicense.com).
+  3. Add a SPDX header to source files, e.g.  # SPDX-License-Identifier: MIT
+  4. Set the "License" field if you publish to GitHub.

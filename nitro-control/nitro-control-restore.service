@@ -1,0 +1,26 @@
+[Unit]
+Description=Nitro Control — Restore hardware settings on boot
+Documentation=https://github.com/bradleyfoster/nitro-control
+After=multi-user.target
+# Wait for linuwu_sense to be loaded
+After=systemd-modules-load.service
+Wants=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Run as root so we can write sysfs directly (no pkexec needed here)
+User=root
+ExecStartPre=/bin/sh -c 'modprobe linuwu_sense nitro_v4=1 || true'
+ExecStartPre=/bin/sleep 2
+ExecStart=/usr/bin/python3 /usr/local/lib/nitro-control/restore_on_boot.py
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nitro-control-restore
+
+# Restart if it fails
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

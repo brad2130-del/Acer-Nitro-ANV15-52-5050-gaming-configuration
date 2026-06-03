@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Nitro Control
+GenericName=Laptop Control Center
+Comment=Acer Nitro ANV15-52 system control — fans, power profiles, battery, GPU
+Exec=/usr/local/bin/nitro-control
+Icon=nitro-control
+Terminal=false
+Type=Application
+Categories=System;HardwareSettings;Settings;
+Keywords=nitro;acer;fan;power;battery;gpu;laptop;cooling;
+StartupNotify=true
+StartupWMClass=nitro-control

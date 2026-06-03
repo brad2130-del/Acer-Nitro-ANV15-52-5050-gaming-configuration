@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Local user settings that shouldn't be shared
+nitro-control/config/settings.json
+**/settings.json
+
+# Build artifacts
+build/
+dist/
+
+# Compiled ACPI scratch (keep the curated ones under acpi/, ignore stray rebuilds)
+/*.aml
+/*.dat

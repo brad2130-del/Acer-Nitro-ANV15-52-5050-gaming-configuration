@@ -1,0 +1,22 @@
+TODO: CHOOSE A LICENSE BEFORE PUBLISHING
+========================================
+
+This repository does not yet have a license. Until one is added, the default is
+"all rights reserved" and others cannot legally reuse the material.
+
+Considerations specific to this repo:
+
+- Code (nitro-control, guardian, scripts): MIT (permissive, max adoption) or GPL-3.0
+  (copyleft) both work.
+- `linuwu-sense/linuwu_sense.c` is derived from the upstream Linuwu-Sense kernel module,
+  which is GPL-licensed. If you redistribute that file you must comply with its license —
+  see linuwu-sense/NOTICE.md. Consider keeping it out of a permissively-licensed repo, or
+  licensing the kernel-derived parts under GPL.
+- ACPI dumps / DSDT overrides and the telemetry dataset are data/firmware artifacts from your
+  own machine — you can release them under a permissive/CC license or public domain (CC0).
+
+Recommended: dual approach — MIT for your original code, GPL retained for the linuwu_sense
+derivative (or reference it externally instead of bundling), CC0 for the dataset and dumps.
+
+To apply: replace this file with the chosen license text (https://choosealicense.com) and add
+SPDX headers to source files.
