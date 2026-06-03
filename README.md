@@ -75,4 +75,6 @@ claim in `docs/` — e.g. proving the June regression was a *software* power cap
 - The `acer-wmi` sysfs interface comes from the **Linuwu-Sense** kernel module — see
   [`linuwu-sense/NOTICE.md`](linuwu-sense/NOTICE.md) for attribution/licensing. The bundled source
   is included for reproducibility and may carry local patches.
-- **License: not yet chosen** — see [`LICENSE`](LICENSE). Pick one before publishing widely.
+- **License: [GPL-3.0](LICENSE)** — consistent with the GPL-licensed `linuwu_sense` derivative
+  included here. Your original code (nitro-control, guardian, scripts) and the ACPI/telemetry
+  artifacts are released under GPL-3.0.

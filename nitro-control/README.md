@@ -127,4 +127,4 @@ Real, verified in the code — fix before relying on them:
 
 ## License
 
-Not yet chosen — see [`LICENSE`](LICENSE). Pick one before publishing.
+[GPL-3.0](LICENSE). Interfaces with the GPL-licensed `linuwu_sense` kernel module via sysfs.
