@@ -48,6 +48,7 @@ nitro-control/                NitroSense replacement — PyQt6 GUI over linuwu_s
 scripts/game-ready.sh         One-shot "prep for gaming" tuning script
 linuwu-sense/                 The acer-wmi sysfs module source this all relies on (see NOTICE)
 diagnostics/                  Freeze diagnostics bundle + logs
+homelab/frigate/              Frigate NVR (4 cams) with detection offloaded to a Pixel NPU
 ```
 
 ## Quick start

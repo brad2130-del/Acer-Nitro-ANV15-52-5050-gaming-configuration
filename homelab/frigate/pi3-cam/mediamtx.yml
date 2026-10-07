@@ -1,0 +1,18 @@
+# MediaMTX on the Pi 3 — serves the Camera Module v2 (IMX219) as RTSP:
+#   rtsp://pi3.local:8554/cam
+# Hardware H.264 encode, so the Pi 3's CPU stays mostly idle.
+
+rtsp: yes
+rtmp: no
+hls: no
+webrtc: no
+srt: no
+
+paths:
+  cam:
+    source: rpiCamera
+    rpiCameraWidth: 1280
+    rpiCameraHeight: 720
+    rpiCameraFPS: 15
+    rpiCameraBitrate: 2000000
+    rpiCameraIDRPeriod: 30   # keyframe every 2 s — keeps Frigate recording segments clean

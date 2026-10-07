@@ -1,0 +1,49 @@
+# Frigate NVR (4 cameras) + Mosquitto, detection offloaded to the Pixel's NPU.
+#
+# Host: Pi CM4 on Kali (arm64) with Docker. Also runs unchanged on the Acer (amd64) —
+# only the hwaccel preset and /dev/video* devices differ (see README).
+#
+#   cp .env.example .env   # fill in camera URLs / passwords
+#   docker compose up -d
+#   UI: https://<host>:8971  (first-run admin password is printed in `docker logs frigate`)
+
+services:
+  frigate:
+    container_name: frigate
+    image: ghcr.io/blakeblackshear/frigate:stable
+    restart: unless-stopped
+    privileged: true          # simplest way to reach the Pi's V4L2 H.264 decoder
+    shm_size: "256mb"         # 4 cams @ 720p detect ≈ 110 MB frames + logs, with headroom
+    env_file: .env
+    devices:
+      - /dev/video10:/dev/video10   # bcm2835 H.264 decode (preset-rpi-64-h264)
+      - /dev/video11:/dev/video11
+      - /dev/video12:/dev/video12
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config:/config
+      - ${FRIGATE_MEDIA_DIR:-./media}:/media/frigate   # put this on an SSD, not eMMC/SD
+      - type: tmpfs
+        target: /tmp/cache
+        tmpfs:
+          size: 500000000
+    ports:
+      - "8971:8971"      # authenticated web UI
+      - "8554:8554"      # go2rtc RTSP restream
+      - "8555:8555/tcp"  # WebRTC
+      - "8555:8555/udp"
+    depends_on:
+      - mosquitto
+
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - mosquitto-data:/mosquitto/data
+    ports:
+      - "1883:1883"
+
+volumes:
+  mosquitto-data:

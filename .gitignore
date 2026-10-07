@@ -22,3 +22,10 @@ dist/
 # Compiled ACPI scratch (keep the curated ones under acpi/, ignore stray rebuilds)
 /*.aml
 /*.dat
+
+# Homelab: secrets and Frigate runtime state
+homelab/frigate/.env
+homelab/frigate/media/
+homelab/frigate/config/*.db*
+homelab/frigate/config/model_cache/
+homelab/frigate/config/backup.db
