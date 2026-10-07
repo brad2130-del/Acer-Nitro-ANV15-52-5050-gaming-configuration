@@ -1,0 +1,112 @@
+# Frigate config — 4 streams, AI detection on the Pixel's NPU (DeepStack API).
+
+mqtt:
+  enabled: true
+  host: mosquitto
+  port: 1883
+
+# Offload object detection to the Pixel app. It receives a JPEG per detect frame and
+# returns DeepStack-style predictions. Raise api_timeout if you see detector timeouts
+# over Wi-Fi; USB-C Ethernet on the phone keeps it low.
+detectors:
+  pixel:
+    type: deepstack
+    api_url: "{FRIGATE_DETECTOR_URL}"
+    api_timeout: 0.5
+
+# go2rtc pulls each camera once and restreams it, so Frigate, HA and the live view
+# share a single connection per camera.
+go2rtc:
+  streams:
+    cam1:
+      - "{FRIGATE_CAM1_URL}"
+    cam2:
+      - "{FRIGATE_CAM2_MAIN}"
+    cam2_sub:
+      - "{FRIGATE_CAM2_SUB}"
+    cam3:
+      - "{FRIGATE_CAM3_MAIN}"
+    cam3_sub:
+      - "{FRIGATE_CAM3_SUB}"
+    cam4:
+      - "{FRIGATE_CAM4_MAIN}"
+    cam4_sub:
+      - "{FRIGATE_CAM4_SUB}"
+
+ffmpeg:
+  # Pi 4 / CM4 hardware H.264 decode. On the Acer use preset-nvidia (or preset-vaapi
+  # for the Intel iGPU) and drop the /dev/video* devices from docker-compose.yml.
+  hwaccel_args: preset-rpi-64-h264
+  input_args: preset-rtsp-restream
+  output_args:
+    record: preset-record-generic-audio-copy
+
+objects:
+  track: [person, car, dog, cat]
+
+detect:
+  enabled: true
+  fps: 5
+
+record:
+  enabled: true
+  retain:
+    days: 3
+    mode: motion
+  alerts:
+    retain:
+      days: 14
+  detections:
+    retain:
+      days: 14
+
+snapshots:
+  enabled: true
+  retain:
+    default: 14
+
+cameras:
+  # Pi 3 + Camera Module v2 via MediaMTX. Single 720p stream used for both roles;
+  # Frigate scales it down for detection.
+  cam1:
+    ffmpeg:
+      inputs:
+        - path: rtsp://127.0.0.1:8554/cam1
+          roles: [detect, record]
+    detect:
+      width: 640
+      height: 360
+
+  cam2:
+    ffmpeg:
+      inputs:
+        - path: rtsp://127.0.0.1:8554/cam2
+          roles: [record]
+        - path: rtsp://127.0.0.1:8554/cam2_sub
+          roles: [detect]
+    detect:
+      width: 640
+      height: 360
+
+  cam3:
+    ffmpeg:
+      inputs:
+        - path: rtsp://127.0.0.1:8554/cam3
+          roles: [record]
+        - path: rtsp://127.0.0.1:8554/cam3_sub
+          roles: [detect]
+    detect:
+      width: 640
+      height: 360
+
+  cam4:
+    ffmpeg:
+      inputs:
+        - path: rtsp://127.0.0.1:8554/cam4
+          roles: [record]
+        - path: rtsp://127.0.0.1:8554/cam4_sub
+          roles: [detect]
+    detect:
+      width: 640
+      height: 360
+
