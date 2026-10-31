@@ -60,6 +60,41 @@ If that's too fiddly, print **two `Tray-0.5U-RPi3`** instead. It's the same 1U o
 space, the ports are flush at the front, and the Pis screw down normally with
 M2.5 self-tappers.
 
+## 7" screen front for a 6U rack (`panels.py`)
+
+![screen panel](preview/Panel-5U-Screen7.png)
+
+This turns the front of a **6U** Microlab V1 into a touch-screen face for the
+iPistBit 7" LCD Display-C. Install the trays from the back, with their faceplates
+facing backward.
+
+| File | Qty | Notes |
+|-|-|-|
+| `stl/FitCheck-Screen7.stl` | 1 | A 3 mm slice around the window. Test the screen fit with it first. |
+| `stl/Panel-5U-Screen7.stl` | 1 | Print face down. The screen sits upright behind a 1.5 mm bezel lip. |
+| `stl/Strip-Screen7-L.stl`, `-R.stl` | 1 each | Retainer strips. They sit in recesses on the back of the panel and press the screen forward. |
+| `stl/Panel-1U-Vent.stl` | 1 | The 6th U, below the screen: a slotted air intake. |
+
+**Why it's 10 mm thick:** upright, the screen is 115 mm wide including its
+mounting tabs, but the columns are only 112 mm apart. So the screen sits *in front
+of* the columns, inside the panel, and the panel stands about 8 mm proud of the
+stock 2 mm panels. The edges are chamfered to soften that.
+
+**Mounting:** M3 × 12 screws through the counterbored holes. On each side, the
+screws next to the screen also pass through the retainer strip, so the strips are
+clamped without any extra screws. Use at least every other hole beside the screen.
+
+**Cables:** the screen's HDMI, Touch micro-USB and backlight switch face down into a
+hidden bay under the screen. That bay is open to the inside of the rack, so the
+cables run straight back to the RK3518 (HDMI → "Display", USB → "Touch"). Rotate
+the display 90° in the OS, because the ports end of the screen points down.
+
+**Cooling:** air comes in through the grille under the screen and the 1U vent, and
+leaves through `Panel-Cap-120mmFan` (with a 120 mm fan) on the top cap.
+
+**Glass position:** `GLASS_Y0` is the same photo estimate as in the all-in-one case.
+If the picture isn't centred in the fit-check slice, measure and edit it.
+
 ## Printing
 - Print face down on the build plate, like the stock trays.
 - Settings: PLA or PETG, 0.2 mm layers, 3 walls, 15–20 % infill. No supports needed.
